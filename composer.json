@@ -1,5 +1,5 @@
 {
-  "name": "geeh/worker_talk",
+  "name": "geeh/worker-talk",
   "description": "Code to accompany Writing Workers For Scalable Applications talk",
   "minimum-stability": "stable",
   "license": "MIT",
