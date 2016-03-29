@@ -1,0 +1,21 @@
+{
+  "name": "geeh/worker_talk",
+  "description": "Code to accompany Writing Workers For Scalable Applications talk",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gary Hockin",
+      "email": "gary@hock.in"
+    }
+  ],
+  "require": {
+    "predis/predis": "v1.0.3",
+    "pda/pheanstalk": "v3.1.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "Worker": "src/"
+    }
+  }
+}
