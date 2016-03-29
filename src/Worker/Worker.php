@@ -2,6 +2,7 @@
 
 namespace Worker;
 
+use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
 
 class Worker
@@ -41,6 +42,7 @@ class Worker
         }
 
         $this->id = $id;
+        $this->pheanstalk->watch($this->id);
         $this->listen();
     }
 
@@ -61,7 +63,8 @@ class Worker
         echo 'Worker ' . $this->id . ' starting...' . PHP_EOL;
         while ($job = $this->pheanstalk->reserve()) {
             $decodedJob = json_decode($job->getData(), true);
-            if (!is_array($decodedJob) || !$this->handleJob($decodedJob)) {
+            if (!is_array($decodedJob) || !$this->handleJob($decodedJob, $job)) {
+                echo 'Buried bad job :(' . PHP_EOL;
                 $this->pheanstalk->bury($job);
             } else {
                 $this->pheanstalk->delete($job);
@@ -73,14 +76,31 @@ class Worker
      * @param array $decodedJob
      * @return bool
      */
-    private function handleJob(array $decodedJob)
+    private function handleJob(array $decodedJob, Job $job)
     {
         if ($decodedJob['type'] === 'order') {
             // do whatever you want to handle an order...
             $result = Order::handle($decodedJob);
             return $result;
         }
+
+        if ($decodedJob['type'] === 'command') {
+            $result = $this->handleCommand($decodedJob, $job);
+            return $result;
+        }
         return false;
+    }
+
+    private function handleCommand(array $decodedJob, Job $job)
+    {
+        $command = $decodedJob['command'];
+        switch ($command) {
+            case 'stop':
+                echo 'Command "stop" received, stopping...' . PHP_EOL;
+                $this->pheanstalk->delete($job);
+                exit();
+                break;
+        }
     }
 
 }
