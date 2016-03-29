@@ -15,5 +15,6 @@ class Order
     public static function handle(array $decodedJob)
     {
         echo 'Order ' . $decodedJob['orderId'] . ' by ' . $decodedJob['user'] . PHP_EOL;
+        return true;
     }
 }

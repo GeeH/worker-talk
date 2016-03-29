@@ -8,5 +8,8 @@
 chdir(__DIR__ . '/../');
 require('vendor/autoload.php');
 
-$worker = new \Worker\Worker(new \Pheanstalk\Pheanstalk('127.0.0.1'));
+$predis = new Predis\Client();
+$pheanstalk = new \Pheanstalk\Pheanstalk('127.0.0.1');
+
+$worker = new \Worker\Worker($pheanstalk, $predis);
 $worker->start();
